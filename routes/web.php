@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
 	// echo __DIR__;
-    return view('welcome');
+    return redirect()->route('admin_main');
 });
 
 //后台路由

@@ -19,16 +19,21 @@
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['prefix' => 'admin', 'namespace'=>'Admin'], function () {
-	//登录
+Route::group(['prefix' => 'admin', 'namespace'=>'Admin', 'middleware'=>'auth'], function () {
+	//后台主面板
+	Route::get("main/index", "MainController@index")->name('admin_main');
 	
-	Route::post("login", "AuthController@showLoginForm");
+	//财务
+	Route::get("finance", "FinanceController@index")->name('admin_finance');
 
-	Route::get("index", "BaseController@index");
-	Route::get("show", "BaseController@show")->name('sb');
-	Route::get("main/index", "MainController@index")->name('main');
+	//市场
+	Route::get("business", "BusinessController@index")->name('admin_business');
 	
+	//运营
+	Route::get("operate", "OperateController@index")->name('admin_operate');
 
+	//
+	//Route::get("show", "BaseController@show")->name('sb');
 	//后台固定路由
    	//Route::resource('test', 'TestController');
 });

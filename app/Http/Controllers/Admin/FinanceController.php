@@ -1,7 +1,7 @@
 <?php
 /**
-* BaseController
-* @desc 市场
+* FinanceController
+* @desc  财务
 * @author chenlidong
 * @since 2017/06/06
 */
@@ -10,11 +10,11 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class BusinessController extends BaseController
+class FinanceController extends BaseController
 {
     //
     public function index()
     {
-    	echo "BusinessController";
+    	echo "FinanceController";
     }
 }
