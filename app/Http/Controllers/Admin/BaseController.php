@@ -12,12 +12,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Models\config;
 
 class BaseController extends Controller
 {      
-    //默认分页500页
-    const DEFAULT_PAGER_PAGESIZE = 500;
-    
     //后台登录账户信息
     public $bkAdminUser = array();
 
@@ -29,16 +27,20 @@ class BaseController extends Controller
 
     //是否是系统内置管理员
     public $isSystemAdmin = 0;
-
+    
+    //渠道列表，应用列表
+    public $roleAppSource = array();
 
     //初始化信息
     public function __construct()
     {   
+        //var_dump(Auth::user());exit();
         //获取当面用户的信息
         $this->middleware(function ($request, $next) {
             $this->bkAdminUser['id'] = Auth::user()['attributes']['id'];
             $this->bkAdminUser['name'] = Auth::user()['attributes']['name'];
             $this->bkAdminUser['email'] = Auth::user()['attributes']['email'];
+            $this->bkAdminUser['appSource'] = Config::getRoleAppSource(Auth::user()['attributes']['id']);
             return $next($request);
         });
         //获取当前的路由
@@ -47,13 +49,18 @@ class BaseController extends Controller
         if(!empty($this->bkAdminUri) && $this->bkAdminUri != $this->adminHomeUri )
         {
             //$this->middleware('permission:'.$pes)->except('show');
-            $this->middleware('permission:'.$this->bkAdminUri);
+            //$this->middleware('permission:'.$this->bkAdminUri);
         }
-
-
-        
     }
 
+    /**
+     * 获取当前的年,月,日
+     * @return array
+     */
+    public function getYearMonthHour(){
+        return array('year' => date('Y',time()), 'month' => date('m',time()), 'day' => date('d',time()));
+
+    }
     // private function _transPes($route_name)
     // {
     //     $a = explode(".", $route_name);

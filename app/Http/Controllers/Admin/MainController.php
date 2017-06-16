@@ -1,6 +1,6 @@
 <?php
 /**
-* BaseController
+* MainController
 * @desc 后台主面板配置信息，左边菜单列表，配置信息设置
 * @author chenlidong
 * @since 2017/06/06
@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Menus;
+use App\Models\Admin;
 
 class MainController extends BaseController
 {	
@@ -19,7 +19,7 @@ class MainController extends BaseController
     //左边菜单，用户信息
     public function index(){
     	//获取全部菜单
-        $leftMenu = Menus::getLeftMenu();
+        $leftMenu = Admin::getLeftMenu();
         //是否是内置管理员(拥有最高的权限)
         $this->isSystemAdmin = ($this->bkAdminUser['id'] == self::$systemAdminId) ? TRUE : FALSE;
         //根据权限显示菜单
@@ -27,7 +27,7 @@ class MainController extends BaseController
         if ($this->isSystemAdmin) {
         	$permissionMenu = $leftMenu;
         } else {
-        	$permission_ids = Menus::getPermissionIds($this->bkAdminUser['id']);
+        	$permission_ids = Admin::getPermissionIds($this->bkAdminUser['id']);
 	    	foreach ($leftMenu as $menu) {
 	    		if (!$menu['is_display']) continue;
 		        if (!in_array($menu['id'], $permission_ids)) continue;

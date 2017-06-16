@@ -1,10 +1,15 @@
 <?php
-
+/**
+* Admin
+* @desc 权限点，菜单
+* @author chenlidong
+* @since 2017/06/06
+*/
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 
-final class Menus
+class Admin extends BaseConstant
 {   
     /**
      * The attributes that are mass assignable.
@@ -60,11 +65,11 @@ final class Menus
      */
     public static function getPermissionIds ($uid) {
         $permission = array();
+        $permissionIds = array();
         if ($uid) {
             $roleId = self::getRole($uid);
             if ($roleId) $permissionIds = DB::select('SELECT permission_id FROM permission_role WHERE role_id = :role_id',  ['role_id' => $roleId]);
             if ($permissionIds) {
-                $permission = array();
                 foreach ($permissionIds as $key => $id) {
                     $id = (array) $id;
                     $permission[] = $id['permission_id'];
@@ -86,7 +91,21 @@ final class Menus
                 $role_id = (array) $roleId[0];
                 return $role_id['role_id'];
             }
+            return $roleId;
         }
     }
+
+    /**
+     * @desc 获取用户列表
+     * @return array
+     */
+    public static function getUserlist () {
+        $result = array();
+        $result = DB::select('SELECT * FROM users limit 1');
+        if ($result) return self::objectToArray($result);
+        return $result;
+    }
+
+
 
 }

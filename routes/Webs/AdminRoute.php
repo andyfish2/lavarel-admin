@@ -19,23 +19,27 @@
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['prefix' => 'admin', 'namespace'=>'Admin', 'middleware'=>'auth'], function () {
+//后台
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth'], function () {
 	//后台主面板
 	Route::get("main/index", "MainController@index")->name('admin_main');
-	
-	//财务
-	Route::get("finance", "FinanceController@index")->name('admin_finance');
+
+	//用户权限
+	Route::get("adduser", "AdminController@adduser")->name('admin_adduser');
 
 	//市场
-	Route::get("business", "BusinessController@index")->name('admin_business');
-	
-	//运营
-	Route::get("operate", "OperateController@index")->name('admin_operate');
+	Route::get("business/inside", "BusinessController@inside")->name('admin_business_inside');
+	Route::get("business/outside", "BusinessController@outside")->name('admin_business_outside');
+	Route::get("business/cpa", "BusinessController@cpa")->name('admin_business_cpa');
+	Route::get("business/cps", "BusinessController@cps")->name('admin_business_cps');
 
-	//
 	//Route::get("show", "BaseController@show")->name('sb');
 	//后台固定路由
    	//Route::resource('test', 'TestController');
 });
 
+//api
+// Route::get('/user',function(Request $request){
+// 	return 'apiaa';
+// })->middleware('auth:api');
 
