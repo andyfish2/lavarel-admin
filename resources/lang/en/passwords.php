@@ -18,5 +18,7 @@ return [
     'sent' => 'We have e-mailed your password reset link!',
     'token' => 'This password reset token is invalid.',
     'user' => "We can't find a user with that e-mail address.",
+    'password_repeat' => "新密码和旧密码一样，请重新输入",
+    'new_password_repeat' => "新密码不一致，请重新输入",
 
 ];

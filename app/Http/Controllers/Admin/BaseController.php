@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Models\config;
+use App\Models\ServiceFactory;
 
 class BaseController extends Controller
 {      
@@ -31,16 +31,20 @@ class BaseController extends Controller
     //渠道列表，应用列表
     public $roleAppSource = array();
 
+    //获取AdminService
+    public function getAdminService() {
+        return ServiceFactory::getInstance()->createAdminService();
+    }
+
     //初始化信息
     public function __construct()
     {   
-        //var_dump(Auth::user());exit();
         //获取当面用户的信息
         $this->middleware(function ($request, $next) {
             $this->bkAdminUser['id'] = Auth::user()['attributes']['id'];
             $this->bkAdminUser['name'] = Auth::user()['attributes']['name'];
             $this->bkAdminUser['email'] = Auth::user()['attributes']['email'];
-            $this->bkAdminUser['appSource'] = Config::getRoleAppSource(Auth::user()['attributes']['id']);
+            $this->bkAdminUser['appSource'] = $this->getAdminService()->getUserAppSource(Auth::user()['attributes']['id']);
             return $next($request);
         });
         //获取当前的路由

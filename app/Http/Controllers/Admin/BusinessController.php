@@ -95,17 +95,6 @@ class BusinessController extends BaseController
                     'totalAmount' => $currencyAmount ? $this->checkdate($currencyAmount, $field, $i, true)['totalAmount'] : 0,//订单总金额
                 );
             }
-
-            for ( $i = 1; $i <= 31; $i++) { 
-                $data[$i] = array(
-                    'day' => $i,
-                    'newUser' => 324, //新增用户
-                    'newUUID' => 230,//新增设备
-                    'activeUser' => 435,//活跃用户
-                    'activeUUID' => 786,//活跃设备
-                    'totalAmount' => 234.98,//订单总金额
-                );
-            }
             //扣量统计
             $beginTime = $year . '-' . $month . '-01 00:00:00';//这个月的开始时间
             $endTime = $year . '-' . $month . '-' . date('t', strtotime($year . '-' . $month)) . ' 00:00:00';//这个月的结束时间
