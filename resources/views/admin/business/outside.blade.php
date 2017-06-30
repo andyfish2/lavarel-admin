@@ -10,7 +10,7 @@
         </el-breadcrumb>
  
         <el-form :model="searchForm" :rules="searchRules" ref="searchForm" label-width="150px"
-                         inline="true" action="{{ url('admin/business/inside') }}"  method="GET" id="searchForm">
+                         inline="true" action="{{ url('admin/business/outside') }}"  method="GET" id="searchForm">
             <input type="hidden" name="year" id="year-text" :value="searchForm.year">
             <input type="hidden" name="month" id="month-text" :value="searchForm.month">
             <input type="hidden" name="appList" id="appList-text" :value="searchForm.appList">
@@ -21,7 +21,7 @@
                             v-for="item in searchYearList"
                             :key="item.value"
                             :label="item.label"
-                            :value="item.value">
+                            :value="item.label">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -36,7 +36,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="应用列表" prop="appList">
-                <el-select @change="selectChange(searchForm.appList,'appList-text')" v-model="searchForm.appList" multiple placeholder="请选择" filterable>
+                <el-select v-model="searchForm.appList"  placeholder="请选择" filterable>
                     <el-option
                             v-for="item in searchApp"
                             :key="item.value"
@@ -46,7 +46,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="渠道列表" prop="sourceList">
-                <el-select @change="selectChange(searchForm.sourceList,'sourceList-text')" v-model="searchForm.sourceList" multiple placeholder="请选择" filterable>
+                <el-select v-model="searchForm.sourceList"  placeholder="请选择" filterable>
                     <el-option
                             v-for="item in searchSource"
                             :key="item.value"
@@ -118,20 +118,20 @@
         data: {
             order_index : '{{ $bkAdminUri }}',
             searchApp:  [@if (isset($appSource['app']))
-            				@foreach ($appSource['app'] as $item)
-            				{
-            					value: '{{ $item['value'] }}',
-            					label: '{{ $item['label'] }}' 
-            				},
-            				@endforeach
+                            @foreach ($appSource['app'] as $item)
+                            {
+                                value: {{ $item['value'] }},
+                                label: '{{ $item['label'] }}' 
+                            },
+                            @endforeach
                         @endif],
             searchSource: [@if (isset($appSource['source']))
-            				@foreach ($appSource['source'] as $value)
-            				{
-            					value: '{{ $value['value'] }}',
-            					label: '{{ $value['label'] }}' 
-            				},
-            				@endforeach
+                            @foreach ($appSource['source'] as $value)
+                            {
+                                value: '{{ $value['value'] }}',
+                                label: '{{ $value['label'] }}' 
+                            },
+                            @endforeach
                         @endif],
             searchYearList: [{
                 value: 2018,
@@ -185,53 +185,46 @@
             }],
             searchForm: {
                 year: @if (isset($search['year'])) {{ $search['year'] }} @else '' @endif,
-             	month: @if (isset($search['month'])) {{ $search['month'] }} @else '' @endif,
-                appList: @if (isset($search['appId'])) {!! $search['appId'] !!} @else [] @endif,
-                sourceList: @if (isset($search['sourceId'])) {!! $search['sourceId'] !!} @else  @endif,
+                month: @if (isset($search['month'])) {{ $search['month'] }} @else '' @endif,
+                appList: @if (isset($search['appId'])) {{ $search['appId'] }} @else '' @endif,
+                sourceList: @if (isset($search['sourceId'])) {!! $search['sourceId'] !!} @else '' @endif,
             },
             searchRules: {
-                year: [
-                    {required: true, message: '请选择应用'}
-                ],
-                month: [
-                    {required: true, message: '请选择应用组'}
-                ],
-                appList: [
-                    {required: true, message: '请选择渠道'}
-                ],
-                sourceList: [
-                    {required: true, message: '请选择开始时间'}
-                ]
+                // year: [
+                //     {required: true, message: '请选择应用'}
+                // ],
+                // month: [
+                //     {required: true, message: '请选择应用组'}
+                // ],
+                // appList: [
+                //     {required: true, message: '请选择渠道'}
+                // ],
+                // sourceList: [
+                //     {required: true, message: '请选择开始时间'}
+                // ]
             },
-            
-            // year:'',
-            // month:'',
-            // appList:'',
-            // sourceList:'',
             tableData: [
-            	@if (isset($inside))
-            		@foreach ($inside as $business)
-            		{
-            			day: '{{ $business['day'] }}',
-            			newUser: '{{ $business['newUser'] }}',
-            			newUUID: '{{ $business['newUUID'] }}',
-            			activeUser: '{{ $business['activeUser'] }}',
-            			activeUUID: '{{ $business['activeUUID'] }}',
-            			totalAmount: '{{ $business['totalAmount'] }}',
-            		},
-            		@endforeach
+                @if (isset($outside))
+                    @foreach ($outside as $business)
+                    {
+                        day: '{{ $business['day'] }}',
+                        newUser: '{{ $business['newUser'] }}',
+                        newUUID: '{{ $business['newUUID'] }}',
+                        activeUser: '{{ $business['activeUser'] }}',
+                        activeUUID: '{{ $business['activeUUID'] }}',
+                        totalAmount: '{{ $business['totalAmount'] }}',
+                    },
+                    @endforeach
                 @endif
             ],
         },
         methods: {
-        	// selectChange: function (value, dom) {
-         //        $('#'+dom).val(value);
-         //    },
-        	submitForm: function (formName,confirm) {
+            submitForm: function (formName,confirm) {
                 var _this = this;
                 this.$refs[formName].validate(function (valid) {
                     if (valid) {
                         var form = document.getElementById(formName); //this.submit();
+                        //console.log(document.getElementsByName('year').value); //this.submit();
                         form.submit();
                     }
                 });

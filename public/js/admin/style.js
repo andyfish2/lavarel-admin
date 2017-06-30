@@ -1,0 +1,4 @@
+    var index = new Vue({
+       
+    });
+

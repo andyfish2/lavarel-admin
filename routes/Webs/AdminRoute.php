@@ -24,12 +24,16 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 	//后台主面板
 	Route::get("main/index", "MainController@index")->name('admin_main');
 
-	//权限设置
+	//用户设置
 	Route::get("userlist", "AdminController@userList")->name('admin_userlist');//用户列表
 	Route::match(['post','get'], "resetspassword", "AdminController@resetsPassword")->name('admin_resetspassword');//修改密码
-	Route::match(['post','get'], "addedituser", "AdminController@addEditUser")->name('admin_edituser');//修改或者添加用户信息
+	Route::match(['post','get'], "addedituser", "AdminController@addEditUser")->name('admin_addedituser');//修改或者添加用户信息
 
-	Route::get("test", "AdminController@test")->name('admin_test');
+	//用户组设置
+	Route::get("rolelist", "AdminController@roleList")->name('admin_rolelist');//用户组列表
+	Route::match(['post','get'], "addeditrole", "AdminController@addEditRole")->name('admin_addeditrole');//修改或者添加用户信息
+
+	Route::get("show", "BaseController@show")->name('admin_show');
 	//市场
 	Route::get("business/inside", "BusinessController@inside")->name('admin_business_inside');
 	Route::get("business/outside", "BusinessController@outside")->name('admin_business_outside');

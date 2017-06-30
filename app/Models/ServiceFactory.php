@@ -38,7 +38,7 @@ final class ServiceFactory
      */
     public function createBusinessService() {
         if (!isset(self::$services["Business"])) {
-          self::$services["Business"] = new Admin();
+          self::$services["Business"] = new Business();
         }
         return self::$services["Business"];
     } 

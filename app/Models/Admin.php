@@ -28,7 +28,7 @@ class Admin extends BaseConstant
     protected $hidden = [];
 
     /**
-     * @desc 左侧菜单(权限点)
+     * @desc 左侧菜单
      * @return array
      */
     public function getLeftMenu () {
@@ -37,15 +37,36 @@ class Admin extends BaseConstant
         if ($menus) {
           foreach ($menus as $menu) {
             $menu = (array)$menu;
-            if ($menu['parent_id'] == 0) $leftMenus[$menu['id']] = $menu;
+            if ($menu['parent_id'] == 0 && $menu['is_menu'] == 0) $leftMenus[$menu['id']] = $menu;
           }
           foreach ($menus as $menu) {
             $menu = (array)$menu;
-            if ($menu['parent_id']) $leftMenus[$menu['parent_id']]['sub'][] = $menu;
+            if ($menu['parent_id'] && $menu['is_menu'] == 0) $leftMenus[$menu['parent_id']]['sub'][] = $menu;
           }
         }
         return $leftMenus;
     }
+
+    /**
+     * @desc 权限点
+     * @return array
+     */
+    public function getPermissions () {
+        $per = array();
+        $permissions = $this->getAdminMenus();
+        if ($permissions) {
+          foreach ($permissions as $permission) {
+            $permission = (array)$permission;
+            if ($permission['parent_id'] == 0) $per[$permission['id']] = $permission;
+          }
+          foreach ($permissions as $permission) {
+            $permission = (array)$permission;
+            if ($permission['parent_id']) $per[$permission['parent_id']]['sub'][] = $permission;
+          }
+        }
+        return $per;
+    }
+
 
     /**
      * @desc 获取全部菜单(权限点)
@@ -128,7 +149,7 @@ class Admin extends BaseConstant
             if (array_key_exists("email", $field)) $updatefields['email'] = $field['email'];
             if (array_key_exists("password", $field)) $updatefields['password'] = $field['password'];
             if (array_key_exists("status", $field)) $updatefields['status'] = $field['status'];
-            if (array_key_exists("updated_at", $field)) $updatefields['updated_at'] = time();
+            if (array_key_exists("updated_at", $field)) $updatefields['updated_at'] = $field['updated_at'];
             $bindValue = $updatefields;
             $bindValue['id'] = $id;
             $result = DB::update("UPDATE users" . $this->getUpdateSect($updatefields) . " WHERE id = :id", $bindValue);
@@ -195,14 +216,72 @@ class Admin extends BaseConstant
     public function getUserAppSource ($uid) {
         $result = array();
         if ($uid) {
-            $roleAppSource = DB::select("SELECT * FROM user_app_source WHERE user_id = :user_id limit 1", ['user_id' => $uid]);
-            if ($roleAppSource) {
-                $roleAppSource = (array) $roleAppSource[0];
-                $result['user_id'] = $roleAppSource['user_id'];
-                $result['app_id'] = json_decode($roleAppSource['app_id'], true);
-                $result['source_id'] = json_decode($roleAppSource['source_id'], true);
+            $userAppSource = DB::select("SELECT * FROM user_app_source WHERE user_id = :user_id limit 1", ['user_id' => $uid]);
+            if ($userAppSource) {
+                $userAppSource = (array) $userAppSource[0];
+                $result['user_id'] = $userAppSource['user_id'];
+                $result['app_id'] = json_decode($userAppSource['app_id'], true);
+                $result['source_id'] = json_decode($userAppSource['source_id'], true);
             }
         }
+        return $result;
+    }
+
+    /**
+     * @desc 获取单个应用
+     * @dataname app
+     * @param int AppID 应用id
+     * @return array
+     */
+    public function getAppByID ($appID) {
+        $result = array();
+        if ($appID) {
+            $app = DB::select("SELECT * FROM app WHERE AppID = :AppID limit 1", ['AppID' => $appID]);
+            if ($app) {
+                $result = (array) $app[0];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @desc 获取单个渠道
+     * @dataname source
+     * @param int sourceID 渠道id
+     * @return array
+     */
+    public function getSourceByID ($sourceID) {
+        $result = array();
+        if ($sourceID) {
+            $source = DB::select("SELECT * FROM config_app_source WHERE SourceID = :SourceID limit 1", ['SourceID' => $sourceID]);
+            if ($source) {
+                $result = (array) $source[0];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @desc 获取全部应用
+     * @dataname app
+     * @return array
+     */
+    public function getAppList () {
+        $result = array();
+        $result = DB::select("SELECT * FROM app");
+        if ($result) return $this->objectToArray($result);
+        return $result;
+    }
+
+    /**
+     * @desc 获取全部渠道
+     * @dataname source
+     * @return array
+     */
+    public function getSourceList () {
+        $result = array();
+        $result = DB::select("SELECT * FROM config_app_source");
+        if ($result) return $this->objectToArray($result);
         return $result;
     }
 

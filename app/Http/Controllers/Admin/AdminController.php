@@ -47,7 +47,7 @@ class AdminController extends BaseController
      * @return User
      */
     public function addEditUser(Request $request)
-    {   
+    {
         $id = $request->input('id');
         $name = $request->input('name');
         $email = $request->input('email');
@@ -65,14 +65,17 @@ class AdminController extends BaseController
                 $data['email'] = $userInfo[0]['email'];
                 $data['status'] = $userInfo[0]['status'];
                 $data['id'] = $id;
+                
             }
         }
 
         if ($request->isMethod('post')) {
+            $nameRole = '|unique:users,name';
+            if ($id && isset($userInfo[0]['name']) && ($name == $userInfo[0]['name'])) $nameRole = '';
             $validator = Validator::make($request->all(), [
-                'name' => 'required|unique:users,name',
+                'name' => 'required' . $nameRole,
                 'email' => 'required',
-                'role' => 'required|numeric',
+                'role' => 'required',
                 'status' => 'present',
                 'id' => 'present'
             ]);
@@ -87,6 +90,7 @@ class AdminController extends BaseController
                 if ($name != $userInfo[0]['name']) $insertFields['name'] = $name;
                 if ($email != $userInfo[0]['email']) $insertFields['email'] = $email;
                 if ($status != $userInfo[0]['status']) $insertFields['status'] = $status;
+                $insertFields['updated_at'] = date('Y-m-d H:i:s', time());
                 if($this->getAdminService()->updateUserInfo($id, $insertFields)){
                     if ($roleId && $roleId != $data['roleId']) {
                         if($this->getAdminService()->updateUserRole($id, $roleId)){
@@ -119,43 +123,7 @@ class AdminController extends BaseController
             }
             $data['role'] = $roleList;
         }
-        //var_dump($data);exit();
-        return view('admin.login.edituser', $data);
-        //var_dump($this->getAdminService()->getUserList());exit();
-    }
-
-    /**
-     * 用户组列表
-     *
-     * @param  array  $data
-     * @return User
-     */
-    public function roleList()
-    {   
-        var_dump($this->getAdminService()->getUserList());exit();
-    }
-
-    /**
-     * 添加用户组或者修改用户组的权限设置
-     *
-     * @param  array  $data
-     * @return User
-     */
-    public function editRole(Request $request)
-    {   
-        
-    }
-
-
-    //测试
-    public function test()
-    {   
-        $id = 6;
-        $data = array();
-        $data['name'] = 'zzeqweq';
-        $data['eamil'] = 'dgasd@sadkkk.com';
-        $data['id'] = $id;
-        return view('admin.login.edituser',['data'=> $data, 'id' => $id ]);
+        return view('admin.login.addedituser', $data);
     }
 
     /**
@@ -196,10 +164,92 @@ class AdminController extends BaseController
                     return redirect()->back()->withInput()->withErrors($errors);
                 }
                 //更改密码
-                if ($this->getAdminService()->updateUserInfo($id, array('password' => bcrypt($newPassword)))) return redirect('/admin/main/index');
+                if ($this->getAdminService()->updateUserInfo($id, array('password' => bcrypt($newPassword)))) return redirect($this->adminHomeUri);
             }
         }
         return view('admin.login.resetpassword');
+    }
+
+    /**
+     * 用户组列表
+     *
+     * @param  array  $data
+     * @return User
+     */
+    public function roleList()
+    {   
+        var_dump($this->getAdminService()->getRoleList());exit();
+    }
+
+    /**
+     * 添加用户组或者修改用户组的权限设置
+     *
+     * @param  array  $data
+     * @return User
+     */
+    public function addEditRole(Request $request)
+    {   
+        // $id = $request->input('id');
+        // $name = $request->input('name');
+        // $permission = $request->input('permission');
+
+        // //获取所有权限
+        // $data = array();
+        // $permissions = $this->getAdminService()->getPermissions();
+        // $data['permissions'] = $permissions;
+        
+        // //读取用户组信息
+        // if ($id) {
+        //     $role = $this->getAdminService()->getRoleById($id);
+        //     if ($role) {
+        //         $data['display_name'] = $role[0]['display_name'];
+        //         $data['id'] = $id;
+        //     }
+        // }
+
+        // if ($request->isMethod('post')) {
+        //     $nameRole = '|unique:roles,display_name';
+        //     if ($id && $role) $nameRole = '';
+        //     $validator = Validator::make($request->all(), [
+        //         'display_name' => 'required' . $nameRole,
+        //         'permission' => 'required',
+        //         'id' => 'present'
+        //     ]);
+        //     if ($validator->fails()) {
+        //         return redirect('admin/addeditroe')
+        //                     ->withErrors($validator)
+        //                     ->withInput();
+        //     }
+        //     if ($role) {
+        //         //编辑
+        //         $insertFields = array();
+        //         if ($name != $userInfo[0]['name']) $insertFields['name'] = $name;
+        //         if ($email != $userInfo[0]['email']) $insertFields['email'] = $email;
+        //         if ($status != $userInfo[0]['status']) $insertFields['status'] = $status;
+        //         $insertFields['updated_at'] = date('Y-m-d H:i:s', time());
+        //         if($this->getAdminService()->updateUserInfo($id, $insertFields)){
+        //             if ($roleId && $roleId != $data['roleId']) {
+        //                 if($this->getAdminService()->updateUserRole($id, $roleId)){
+        //                     echo '编辑成功';exit();
+        //                 }
+        //             }
+        //         }
+        //     } else {
+        //         //添加
+        //         $user = User::create([
+        //             'name' => $name,
+        //             'email' => $email,
+        //             'password' => bcrypt('123456'),
+        //         ]);
+        //         if($user && $roleId) {
+        //             if($this->getAdminService()->insertUserRole($user->id, $roleId)){
+        //                 echo '添加成功';exit();
+        //             }
+        //         }
+        //     }
+        // }
+
+        // return view('admin.login.addeditrole', $data);
     }
 
     /**

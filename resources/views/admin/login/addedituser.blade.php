@@ -37,18 +37,23 @@
                             </div>
                         </div>
                         
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
                             <label for="email" class="col-md-4 control-label">用户组</label>
 
                             <div class="col-md-6">
                                 <select name = 'role' class="form-control">
-                                    <option value="0">请选择</option>
+                                    <option value="">请选择</option>
                                     @if ($role)
                                         @foreach ($role as $item)
                                             <option value="{{ $item['id'] }}" @if (isset($roleId) && $item['id'] == $roleId) selected  @endif  @if (old('role') == $item['id']) selected  @endif> {{ $item['display_name'] }}</option>
                                         @endforeach
                                     @endif
                                 </select>
+                                 @if ($errors->has('role'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('role') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
                         

@@ -143,7 +143,7 @@ return [
     'numeric'              => 'The :attribute must be a number.',
     'present'              => 'The :attribute field must be present.',
     'regex'                => 'The :attribute format is invalid.',
-    'required'             => 'The :attribute field is required.',
+    'required'             => '请选择 :attribute ',
     'required_if'          => 'The :attribute field is required when :other is :value.',
     'required_unless'      => 'The :attribute field is required unless :other is in :values.',
     'required_with'        => 'The :attribute field is required when :values is present.',
@@ -196,7 +196,8 @@ return [
         'email' => '邮箱',
         'old_password' => '原密码',
         'new_password' => '新密码',
-        'new_repeat_password' => '新密码'
+        'new_repeat_password' => '新密码',
+        'role' => '用户组'
     ],
 
 ];

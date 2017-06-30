@@ -9,7 +9,6 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Business;
 
 class BusinessController extends BaseController
 {
@@ -19,29 +18,39 @@ class BusinessController extends BaseController
      */
     public function inside(Request $request)
     {	
-    	$year = $request->input('year', $this->getYearMonthHour()['year']);
-    	$month = $request->input('month', 0);
-    	$appId = $request->input('appId', 0);
-    	$sourceId = $request->input('sourceId', 0);
+    	$year = $request->input('year');
+    	$month = $request->input('month');
+    	$appId = $request->input('appList');
+    	$sourceId = $request->input('sourceList');
 
-		$year = 2013;
-		$appId = '1000';
-		$month = 10;
-		$sourceId = "'a_01'";
+        $data = array();
+        $search = array();
+        $search['year'] = $year;
+        $search['month'] = $month;
+        $search['appId'] = $appId ? json_encode(explode(',', $appId)) : '[]';
+        $search['sourceId'] = $sourceId ? json_encode(explode(',', $sourceId)) : '[]';
     	if ($appId && $sourceId) {
-    		$data = array();
+            $year = (int) $year;
+            $month = (int) $month;
+    		if($sourceId) {
+                $sourcelist = explode(',', $sourceId);
+                $sourceId = '';
+                foreach ($sourcelist as $value) {
+                    $sourceId .= "'" . $value . "'";
+                }
+            }
     		if ($month) {
     			//年月都有情况，数据按每月的天数显示
-    			$newUser = Business::getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
-    			$activeUser = Business::getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
-    			$currencyAmount = Business::getAmountByYearAndMonth($year, $month, $appId, $sourceId);//订单总额
+    			$newUser = $this->getBusinessService()->getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
+    			$activeUser = $this->getBusinessService()->getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
+    			$currencyAmount = $this->getBusinessService()->getAmountByYearAndMonth($year, $month, $appId, $sourceId);//订单总额
                 $count = date('t', strtotime($year . '-' . $month));
                 $field = 'day';
     		} else {
     			//只有年的情况，数据按月显示
-    			$newUser = Business::getNewUserByYear($year, $appId, $sourceId);//新增用户，设备
-    			$activeUser = Business::getActiveUserByYear($year, $appId, $sourceId);//活跃用户，设备
-    			$currencyAmount = Business::getAmountByYear($year, $appId, $sourceId);//订单总额
+    			$newUser = $this->getBusinessService()->getNewUserByYear($year, $appId, $sourceId);//新增用户，设备
+    			$activeUser = $this->getBusinessService()->getActiveUserByYear($year, $appId, $sourceId);//活跃用户，设备
+    			$currencyAmount = $this->getBusinessService()->getAmountByYear($year, $appId, $sourceId);//订单总额
                 $count = 12;
                 $field = 'month';
     		}
@@ -55,8 +64,8 @@ class BusinessController extends BaseController
                     'totalAmount' => $currencyAmount ? $this->checkdate($currencyAmount, $field, $i, true)['totalAmount'] : 0,//订单总金额
                 );
             }
-            return view('admin.business.inside', ['inside' => $data]);
     	}
+        return view('admin.business.inside', ['inside' => $data, 'search' => $search]);
     }
 
     /**
@@ -65,26 +74,30 @@ class BusinessController extends BaseController
      */
     public function outside(Request $request)
     {   
-        $year = $request->input('year', $this->getYearMonthHour()['year']);
-        $month = $request->input('month', 0);
-        $appId = $request->input('appId', 0);
-        $sourceId = $request->input('sourceId', 0);
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $appId = $request->input('appList');
+        $sourceId = $request->input('sourceList');
 
-        $year = 2017;
-        $appId = 1;
-        $month = 7;
-        $sourceId = 2;
-        if ($appId && $sourceId && $month) {
+        $data = array();
+        $outside = array();
+        $search['year'] = $year;
+        $search['month'] = $month;
+        $search['appId'] = $appId;
+        $search['sourceId'] =  "'" . $sourceId  . "'";
+        if ($appId && $sourceId && $month && $year) {
+            $year = (int) $year;
+            $month = (int) $month;
+            $source_id = "'" . $sourceId  . "'";
             //数据按每月的天数显示
-            $newUser = Business::getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
-            $activeUser = Business::getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
-            $currencyAmount = Business::getAmountByYearAndMonth($year, $month, $appId, $sourceId);//订单总额
+            $newUser = $this->getBusinessService()->getNewUserByYearAndMonth($year, $month, $appId, $source_id);//新增用户，设备
+            $activeUser = $this->getBusinessService()->getActiveUserByYearAndMonth($year, $month, $appId, $source_id);//活跃用户，设备
+            $currencyAmount = $this->getBusinessService()->getAmountByYearAndMonth($year, $month, $appId, $source_id);//订单总额
             //$beginTime = $year . '-' . $month . '-01 00:00:00';
             //$endTime = $year . '-' . $month . '-' . date('t', strtotime($year . '-' . $month)) . ' 00:00:00';
             
             $count = date('t', strtotime($year . '-' . $month));
             $field = 'day';
-            $data = array();
             for ( $i = 1; $i <= $count; $i++) { 
                 $data[$i] = array(
                     'day' => $i,
@@ -98,7 +111,7 @@ class BusinessController extends BaseController
             //扣量统计
             $beginTime = $year . '-' . $month . '-01 00:00:00';//这个月的开始时间
             $endTime = $year . '-' . $month . '-' . date('t', strtotime($year . '-' . $month)) . ' 00:00:00';//这个月的结束时间
-            $businessOutSideConfig = Business::getBusinessOutSideConfigByMonth($appId, $sourceId, $beginTime, $endTime);
+            $businessOutSideConfig = $this->getBusinessService()->getBusinessOutSideConfigByMonth($appId, $sourceId, $beginTime, $endTime);
             if ($data && $businessOutSideConfig) {
                 $bool = false;
                 $before = $center = $after = array();
@@ -138,6 +151,7 @@ class BusinessController extends BaseController
                         }
                     }
                 }
+
                 if ($bool) {
                     foreach ($data as $value) {
                         $outside[$value['day']] = array(
@@ -152,7 +166,6 @@ class BusinessController extends BaseController
                 }else{
                     $list = array_merge($before, $center, $after);
                     if ($list) {
-                        $outside = array();
                         foreach ($data as $key => $value) {
                             $flag = true;
                             foreach ($list as $key => $item) {
@@ -177,96 +190,95 @@ class BusinessController extends BaseController
                     }
                 }
             }
-            var_dump($outside);
-            //return view('admin.business.inside', ['outside' => $data]);
+        }
+        return view('admin.business.outside', ['outside' => $outside, 'search' => $search]);
+    }
+
+    /**
+     * @desc 合作渠道cpa 数据
+     * @return view
+     */
+    public function cpa(Request $request)
+    {   
+        $year = $request->input('year', $this->getYearMonthHour()['year']);
+        $month = $request->input('month', 0);
+        $appId = $request->input('appId', 0);
+        $sourceId = $request->input('sourceId', 0);
+
+        $year = 2013;
+        $appId = '1000';
+        $month = 10;
+        $sourceId = "'a_01'";
+        if ($appId && $sourceId) {
+            $data = array();
+            if ($month) {
+                //年月都有情况，数据按每月的天数显示
+                $newUser = $this->getBusinessService()->getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
+                $activeUser = $this->getBusinessService()->getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
+                $count = date('t', strtotime($year . '-' . $month));
+                $field = 'day';
+            } else {
+                //只有年的情况，数据按月显示
+                $newUser = $this->getBusinessService()->getNewUserByYear($year, $appId, $sourceId);//新增用户，设备
+                $activeUser = $this->getBusinessService()->getActiveUserByYear($year, $appId, $sourceId);//活跃用户，设备
+                $count = 12;
+                $field = 'month';
+            }
+            for ( $i = 1; $i <= $count; $i++) { 
+                $data[$i] = array(
+                    'day' => $i,
+                    'newUser' => $newUser ? $this->checkdate($newUser, $field, $i)['uidNum'] : 0, //新增用户
+                    'newUUID' => $newUser ? $this->checkdate($newUser, $field, $i)['UUIDNum'] : 0,//新增设备
+                    'activeUser' => $activeUser ? $this->checkdate($activeUser, $field, $i)['uidNum'] : 0,//活跃用户
+                    'activeUUID' => $activeUser ? $this->checkdate($activeUser, $field, $i)['UUIDNum'] : 0,//活跃设备
+                );
+            }
+            return view('admin.business.inside', ['inside' => $data]);
         }
     }
 
-    // /**
-    //  * @desc 合作渠道cpa 数据
-    //  * @return view
-    //  */
-    // public function cpa(Request $request)
-    // {   
-    //     $year = $request->input('year', $this->getYearMonthHour()['year']);
-    //     $month = $request->input('month', 0);
-    //     $appId = $request->input('appId', 0);
-    //     $sourceId = $request->input('sourceId', 0);
+    /**
+     * @desc  * @desc 合作渠道cps 数据
+     * @return view
+     */
+    public function cps(Request $request)
+    {   
+        $year = $request->input('year', $this->getYearMonthHour()['year']);
+        $month = $request->input('month', 0);
+        $appId = $request->input('appId', 0);
+        $sourceId = $request->input('sourceId', 0);
 
-    //     $year = 2013;
-    //     $appId = '1000';
-    //     $month = 10;
-    //     $sourceId = "'a_01'";
-    //     if ($appId && $sourceId) {
-    //         $data = array();
-    //         if ($month) {
-    //             //年月都有情况，数据按每月的天数显示
-    //             $newUser = Business::getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
-    //             $activeUser = Business::getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
-    //             $count = date('t', strtotime($year . '-' . $month));
-    //             $field = 'day';
-    //         } else {
-    //             //只有年的情况，数据按月显示
-    //             $newUser = Business::getNewUserByYear($year, $appId, $sourceId);//新增用户，设备
-    //             $activeUser = Business::getActiveUserByYear($year, $appId, $sourceId);//活跃用户，设备
-    //             $count = 12;
-    //             $field = 'month';
-    //         }
-    //         for ( $i = 1; $i <= $count; $i++) { 
-    //             $data[$i] = array(
-    //                 'day' => $i,
-    //                 'newUser' => $newUser ? $this->checkdate($newUser, $field, $i)['uidNum'] : 0, //新增用户
-    //                 'newUUID' => $newUser ? $this->checkdate($newUser, $field, $i)['UUIDNum'] : 0,//新增设备
-    //                 'activeUser' => $activeUser ? $this->checkdate($activeUser, $field, $i)['uidNum'] : 0,//活跃用户
-    //                 'activeUUID' => $activeUser ? $this->checkdate($activeUser, $field, $i)['UUIDNum'] : 0,//活跃设备
-    //             );
-    //         }
-    //         return view('admin.business.inside', ['inside' => $data]);
-    //     }
-    // }
-
-    // /**
-    //  * @desc  * @desc 合作渠道cps 数据
-    //  * @return view
-    //  */
-    // public function cps(Request $request)
-    // {   
-    //     $year = $request->input('year', $this->getYearMonthHour()['year']);
-    //     $month = $request->input('month', 0);
-    //     $appId = $request->input('appId', 0);
-    //     $sourceId = $request->input('sourceId', 0);
-
-    //     $year = 2013;
-    //     $appId = '1000';
-    //     $month = 10;
-    //     $sourceId = "'a_01'";
-    //     if ($appId && $sourceId) {
-    //         $data = array();
-    //         if ($month) {
-    //             //年月都有情况，数据按每月的天数显示
-    //             $newUser = Business::getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
-    //             $activeUser = Business::getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
-    //             $count = date('t', strtotime($year . '-' . $month));
-    //             $field = 'day';
-    //         } else {
-    //             //只有年的情况，数据按月显示
-    //             $newUser = Business::getNewUserByYear($year, $appId, $sourceId);//新增用户，设备
-    //             $activeUser = Business::getActiveUserByYear($year, $appId, $sourceId);//活跃用户，设备
-    //             $count = 12;
-    //             $field = 'month';
-    //         }
-    //         for ( $i = 1; $i <= $count; $i++) { 
-    //             $data[$i] = array(
-    //                 'day' => $i,
-    //                 'newUser' => $newUser ? $this->checkdate($newUser, $field, $i)['uidNum'] : 0, //新增用户
-    //                 'newUUID' => $newUser ? $this->checkdate($newUser, $field, $i)['UUIDNum'] : 0,//新增设备
-    //                 'activeUser' => $activeUser ? $this->checkdate($activeUser, $field, $i)['uidNum'] : 0,//活跃用户
-    //                 'activeUUID' => $activeUser ? $this->checkdate($activeUser, $field, $i)['UUIDNum'] : 0,//活跃设备
-    //             );
-    //         }
-    //         return view('admin.business.inside', ['inside' => $data]);
-    //     }
-    // }
+        $year = 2013;
+        $appId = '1000';
+        $month = 10;
+        $sourceId = "'a_01'";
+        if ($appId && $sourceId) {
+            $data = array();
+            if ($month) {
+                //年月都有情况，数据按每月的天数显示
+                $newUser = $this->getBusinessService()->getNewUserByYearAndMonth($year, $month, $appId, $sourceId);//新增用户，设备
+                $activeUser = $this->getBusinessService()->getActiveUserByYearAndMonth($year, $month, $appId, $sourceId);//活跃用户，设备
+                $count = date('t', strtotime($year . '-' . $month));
+                $field = 'day';
+            } else {
+                //只有年的情况，数据按月显示
+                $newUser = $this->getBusinessService()->getNewUserByYear($year, $appId, $sourceId);//新增用户，设备
+                $activeUser = $this->getBusinessService()->getActiveUserByYear($year, $appId, $sourceId);//活跃用户，设备
+                $count = 12;
+                $field = 'month';
+            }
+            for ( $i = 1; $i <= $count; $i++) { 
+                $data[$i] = array(
+                    'day' => $i,
+                    'newUser' => $newUser ? $this->checkdate($newUser, $field, $i)['uidNum'] : 0, //新增用户
+                    'newUUID' => $newUser ? $this->checkdate($newUser, $field, $i)['UUIDNum'] : 0,//新增设备
+                    'activeUser' => $activeUser ? $this->checkdate($activeUser, $field, $i)['uidNum'] : 0,//活跃用户
+                    'activeUUID' => $activeUser ? $this->checkdate($activeUser, $field, $i)['UUIDNum'] : 0,//活跃设备
+                );
+            }
+            return view('admin.business.inside', ['inside' => $data]);
+        }
+    }
 
 
     /**

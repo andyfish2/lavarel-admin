@@ -1,17 +1,24 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-                <div class="panel-body"></div>
-                 <?php echo $userinfo['name']; ?></br>
-                 <?php echo $userinfo['email']; ?></br>
-                
-            </div>
-        </div>
-    </div>
+<!--左侧导航结束-->
+<div class="content-wrapper">
+    <el-row id="config">
+        <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>欢迎!</el-breadcrumb-item>
+        </el-breadcrumb>
+        
+    </el-row>
 </div>
+
+<script type="text/javascript">
+    var index = new Vue({
+        el: '#index',
+        data: {
+            order_index : '{{ $bkAdminUri }}'
+        },
+    });
+</script>
 @endsection
+

@@ -17,13 +17,11 @@ class Business extends BaseConstant
      * @param int year 年份, string $appId 应用, string $sourceId 设备
      * @return array
      */
-    public static function getNewUserByYear ($year, $appId, $sourceId) {
+    public function getNewUserByYear ($year, $appId, $sourceId) {
         $result = array();
         if ($year && $appId && $sourceId) {
             $result  = DB::select("SELECT DATE_FORMAT(RegDate,'%m') as month, count(distinct UserID) as uidNum, count(distinct RegUUID) as UUIDNum FROM account_registration_app WHERE DATE_FORMAT(RegDate,'%Y') = :year and AppID in (" . $appId . ") and RegSource in (" . $sourceId . ") group by DATE_FORMAT(RegDate,'%m') ORDER BY month asc limit 12", ['year' => $year]);
-            if ($result) return self::objectToArray($result);
-            //LOVE@wzxwnkx2015
-            //18257096884
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }
@@ -34,11 +32,11 @@ class Business extends BaseConstant
      * @param int year 年份, int month 月份, string $appId 应用, string $sourceId 设备
      * @return array
      */
-    public static function getNewUserByYearAndMonth ($year, $month, $appId, $sourceId) {
+    public function getNewUserByYearAndMonth ($year, $month, $appId, $sourceId) {
         $result = array();
         if ($year && $month && $appId && $sourceId) {
-            $result  = DB::select("SELECT DATE_FORMAT(RegDate,'%d') as day, count(distinct UserID) as uidNum, count(distinct RegUUID) as UUIDNum FROM account_registration_app WHERE DATE_FORMAT(RegDate,'%Y') = :year and DATE_FORMAT(RegDate,'%m') = :month and AppID in (" . $appId . ") and RegSource in (" . $sourceId . ") group by DATE_FORMAT(RegDate,'%d') ORDER BY day asc limit 31", ['year' => $year, 'month' => $month]);
-            if ($result) return self::objectToArray($result);
+            $result  = DB::select("SELECT DATE_FORMAT(RegDate,'%d') as day, count(distinct UserID) as uidNum, count(distinct RegUUID) as UUIDNum FROM account_registration_app WHERE DATE_FORMAT(RegDate,'%Y') = :year and DATE_FORMAT(RegDate,'%m') = :month and AppID in (" . $appId . ") and RegSource in (" . $sourceId . ") group by DATE_FORMAT(RegDate,'%d') ORDER BY day asc limit 31", ["year" => $year, "month" => $month]);
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }
@@ -49,13 +47,11 @@ class Business extends BaseConstant
      * @param int year 年份, string $appId 应用, string $sourceId 设备
      * @return array
      */
-    public static function getActiveUserByYear ($year, $appId, $sourceId) {
+    public function getActiveUserByYear ($year, $appId, $sourceId) {
         $result = array();
         if ($year && $appId && $sourceId) {
             $result  = DB::select("SELECT DATE_FORMAT(Date,'%m') as month, count(distinct UserID) as uidNum, count(distinct UUID) as UUIDNum FROM record_date_login WHERE DATE_FORMAT(Date,'%Y') = :year and AppID in (". $appId . ") and Source in (" . $sourceId . ") group by DATE_FORMAT(Date,'%m') ORDER BY month asc limit 12", ['year' => $year]);
-            if ($result) return self::objectToArray($result);
-            //LOVE@wzxwnkx2015
-            //18257096884
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }
@@ -66,11 +62,11 @@ class Business extends BaseConstant
      * @param int year 年份, int month 月份, string $appId 应用, string $sourceId 设备
      * @return array
      */
-    public static function getActiveUserByYearAndMonth ($year, $month, $appId, $sourceId) {
+    public function getActiveUserByYearAndMonth ($year, $month, $appId, $sourceId) {
         $result = array();
         if ($year && $month && $appId && $sourceId) {
             $result  = DB::select("SELECT DATE_FORMAT(Date,'%d') as day, count(distinct UserID) as uidNum, count(distinct UUID) as UUIDNum FROM record_date_login WHERE DATE_FORMAT(Date,'%Y') = :year and DATE_FORMAT(Date,'%m') = :month and AppID in (". $appId . ") and Source in (" . $sourceId . ") group by DATE_FORMAT(Date,'%d') ORDER BY day asc limit 31", ['year' => $year, 'month' => $month]);
-            if ($result) return self::objectToArray($result);
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }
@@ -81,11 +77,11 @@ class Business extends BaseConstant
      * @param int year 年份, string $appId 应用, string $sourceId 设备
      * @return array
      */
-    public static function getAmountByYear ($year, $appId, $sourceId) {
+    public function getAmountByYear ($year, $appId, $sourceId) {
         $result = array();
         if ($year && $appId && $sourceId) {
             $result  = DB::select("SELECT DATE_FORMAT(SubmitTime,'%m') as month, sum(case when CurrencyType='USD' then CurrencyAmount*6 else CurrencyAmount end ) as totalAmount FROM pay_order_confirm WHERE DATE_FORMAT(SubmitTime,'%Y') = :year and AppID in (". $appId . ") and Source in (" . $sourceId . ") group by DATE_FORMAT(SubmitTime,'%m') ORDER BY month asc limit 12", ['year' => $year]);
-            if ($result) return self::objectToArray($result);
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }
@@ -96,11 +92,11 @@ class Business extends BaseConstant
      * @param int year 年份, int month 月份, string $appId 应用, string $sourceId 设备
      * @return array
      */
-    public static function getAmountByYearAndMonth ($year, $month, $appId, $sourceId) {
+    public function getAmountByYearAndMonth ($year, $month, $appId, $sourceId) {
         $result = array();
         if ($year && $month && $appId && $sourceId) {
             $result  = DB::select("SELECT DATE_FORMAT(SubmitTime,'%d') as day, sum(case when CurrencyType='USD' then CurrencyAmount*6 else CurrencyAmount end) as totalAmount FROM pay_order_confirm WHERE DATE_FORMAT(SubmitTime,'%Y') = :year and DATE_FORMAT(SubmitTime,'%m') = :month and AppID in (". $appId . ") and Source in (" . $sourceId . ") group by DATE_FORMAT(SubmitTime,'%d') ORDER BY day asc limit 31", ['year' => $year, 'month' => $month]);
-            if ($result) return self::objectToArray($result);
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }
@@ -116,7 +112,7 @@ class Business extends BaseConstant
     //     $result = array();
     //     if ($appId && $sourceId && $beginTime && $endTime) {
     //         $result  = DB::select("SELECT * FROM business_outside_config WHERE app_id = :appId AND source_id = :sourceId AND begin_time >= :beginTime AND end_time <= :endTime", ['appId' => $appId, 'sourceId' => $sourceId, 'beginTime' => $beginTime, 'endTime' => $endTime]);
-    //         if ($result) return self::objectToArray($result);
+    //         if ($result) return $this->objectToArray($result);
     //     }
     //     return $result;
     // }
@@ -127,11 +123,11 @@ class Business extends BaseConstant
      * @param int appid 应用id, int sourceId 渠道id, datetime begintime 一个月的开始时间, datetime endtime 一个月的结束时间
      * @return array
      */
-    public static function getBusinessOutSideConfigByMonth ($appId, $sourceId, $beginTime, $endTime) {
+    public function getBusinessOutSideConfigByMonth ($appId, $sourceId, $beginTime, $endTime) {
         $result = array();
         if ($appId && $sourceId && $beginTime && $endTime) {
             $result  = DB::select("SELECT * FROM business_outside_config WHERE app_id = :appId AND source_id = :sourceId AND begin_time <= :endTime AND end_time >= :beginTime order by begin_time asc", ['appId' => $appId, 'sourceId' => $sourceId, 'beginTime' => $beginTime, 'endTime' => $endTime ]);
-            if ($result) return self::objectToArray($result);
+            if ($result) return $this->objectToArray($result);
         }
         return $result;
     }

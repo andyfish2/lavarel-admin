@@ -1,0 +1,95 @@
+@charset "UTF-8";
+*, html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, dl, li, dt, dd, th, td, button, input, form { margin: 0; padding: 0; }
+
+a, button, li, ul, img { text-decoration: none; outline: none; }
+
+a { color: inherit; }
+
+.cl:after { content: ""; display: block; clear: both; }
+
+body { color: #555; font-family: "Microsoft YaHei", "simhei", "Hiragino Sans GB", "宋体", Arial, Tahoma, Helvetica, Geneva, sans-serif; }
+
+.pa { position: absolute; }
+
+.pr { position: relative; }
+
+.fix { position: fixed; }
+
+.fl { float: left; }
+
+.fr { float: right; }
+
+.dl { display: inline-block; }
+
+.db { display: block; }
+
+.tl { text-align: left; }
+
+.tc { text-align: center; }
+
+.tr { text-align: right; }
+
+.text-info { color: #58b6fd; }
+
+.text-link { color: #209ffd; }
+
+.text-success { color: #13cd66; }
+
+.text-danger { color: #fd4949; }
+
+.text-warning { color: #f5b92a; color: #f59e48; }
+
+.icon-operate { padding: 0 10px; cursor: pointer; margin-right: 10px; }
+
+.gray { color: #999; }
+
+.flex { display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start; }
+
+.flex-stretch { -webkit-align-items: stretch; align-items: stretch; }
+
+.flex-center { -webkit-justify-content: center; justify-content: center; }
+
+.flex-v-center { -webkit-align-items: center; align-items: center; }
+
+.flex-1 { -webkit-flex: 1 0; flex: 1 0; }
+
+img { max-width: 100%; }
+
+.mob_show { display: none; }
+
+[v-cloak]{
+  display: none;
+}
+
+.wrapper { width: 100%; height: 100%; }
+.wrapper .el-menu--dark { background: #0f1f35; }
+.wrapper .navBar { color: #fff; width: 220px; height: 100%; overflow-y: auto; background: #0f1f35; }
+.wrapper .navBar a { text-decoration: none; }
+.wrapper .navBar a:hover { text-decoration: none; }
+.wrapper .navBar .el-menu-vertical-demo { margin-top: 10px; }
+.wrapper .content-wrapper { margin-left: 220px; height: 100%; padding: 15px; overflow: auto; }
+.wrapper .content-wrapper .el-breadcrumb { line-height: 50px; padding: 0 15px; margin-bottom: 15px; background: #f2f2f2; }
+
+.navBar.slide_left { width: 3rem; }
+.navBar.slide_left .slimScrollDiv { display: none; }
+.navBar.slide_left ~ .content-wrapper { margin-left: 3rem; }
+
+.nav-header { padding: 15px 10px 15px 20px; background: #1a314f; }
+.nav-header img { width: 48px; padding-bottom: 6px; }
+
+.main-content { /*  margin: 15px 40px;*/ }
+
+@media (min-width: 768px) { .modal-dialog { width: 600px; margin: 100px auto; } }
+.login-dialog .password-form, .password-container .password-form { width: 400px; margin: 20px; }
+.login-dialog .head, .password-container .head { width: 100%; background: #0f1f35; text-align: left; padding: 20px; margin: 30px auto 80px; }
+.login-dialog .head-big-font, .password-container .head-big-font { max-width: 1200px; margin: 0 auto; color: #fff; font-size: 32px; }
+.login-dialog .login-body, .password-container .login-body { margin: 0 auto; max-width: 400px; border: 1px solid #cdcdcd; padding: 20px; border-radius: 6px; }
+.login-dialog .login-form, .password-container .login-form { margin: 0 20px; }
+.login-dialog .login-title, .password-container .login-title { font-size: 26px; text-align: center; line-height: 2; }
+
+@media screen and (max-width: 737px) { html { font-size: 12px; }
+  .btn { margin-bottom: 1rem; }
+  .h3, .h3 { font-size: 20px; }
+  .mob_hide { display: none !important; }
+  .mob_show { display: block !important; }
+  .flex { -webkit-flex-wrap: wrap; flex-wrap: wrap; } }

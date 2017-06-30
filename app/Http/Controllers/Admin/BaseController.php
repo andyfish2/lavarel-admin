@@ -36,6 +36,11 @@ class BaseController extends Controller
         return ServiceFactory::getInstance()->createAdminService();
     }
 
+    //获取BusinessService
+    public function getBusinessService() {
+        return ServiceFactory::getInstance()->createBusinessService();
+    }
+
     //初始化信息
     public function __construct()
     {   
@@ -53,7 +58,7 @@ class BaseController extends Controller
         if(!empty($this->bkAdminUri) && $this->bkAdminUri != $this->adminHomeUri )
         {
             //$this->middleware('permission:'.$pes)->except('show');
-            //$this->middleware('permission:'.$this->bkAdminUri);
+            $this->middleware('permission:'.$this->bkAdminUri);
         }
     }
 

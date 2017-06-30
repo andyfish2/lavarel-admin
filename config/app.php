@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'PRC',
 
     /*
     |--------------------------------------------------------------------------
@@ -178,7 +178,9 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Zizaco\Entrust\EntrustServiceProvider::class,
-        Laravel\Passport\PassportServiceProvider::class
+        Laravel\Passport\PassportServiceProvider::class,
+
+        App\Providers\ComposerServiceProvider::class,
 
     ],
 

@@ -1,7 +1,7 @@
 <?php
 /**
 * 公共配置常量
-* @desc 权限点，菜单
+* @desc model公用部分
 * @author chenlidong
 * @since 2017/06/06
 */
